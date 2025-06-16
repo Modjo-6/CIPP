@@ -15,9 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     permissions:
-       id-token: write
-       contents: read
-       steps:
+      id-token: write
+      contents: read
+
+    steps:
       - uses: actions/checkout@v3
         with:
           submodules: true
@@ -37,6 +38,15 @@ jobs:
         run: |
           cd src
           npm run build
+
+      - name: Get Id Token
+        uses: actions/github-script@v6
+        id: idtoken
+        with:
+          script: |
+            const coredemo = require('@actions/core')
+            return await coredemo.getIDToken()
+          result-encoding: string
 
       - name: Deploy to Azure Static Web Apps
         id: builddeploy
